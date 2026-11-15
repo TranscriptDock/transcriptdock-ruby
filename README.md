@@ -1,12 +1,13 @@
 # Transcript Dock for Ruby
 
 A synchronous client using Ruby's standard libraries. Requires Ruby 3.2 or
-newer. Version 0.1.0.
+newer. Version 0.1.0 is available on
+[RubyGems](https://rubygems.org/gems/transcriptdock).
 
-Install:
+Install from RubyGems:
 
 ```sh
-gem install transcriptdock
+gem install transcriptdock -v 0.1.0
 ```
 
 ```ruby
