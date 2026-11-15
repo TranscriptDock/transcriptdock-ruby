@@ -37,5 +37,24 @@ jobs:
           ruby-version: '3.2'
           bundler-cache: false
       - run: mkdir -p artifacts && gem build transcriptdock.gemspec --output artifacts/transcriptdock-0.1.0.gem
-      - uses: rubygems/configure-rubygems-credentials@17e51a8c9fcf6d5f709e04cc612fd105f9273170
+      - name: Authenticate the pending RubyGems publisher
+        env:
+          RUBYGEMS_OWNER_ID: '256122'
+        run: |
+          python3 - <<'PYTHON'
+          import json, os, urllib.request
+          url = os.environ['ACTIONS_ID_TOKEN_REQUEST_URL'] + '&audience=rubygems.org'
+          request = urllib.request.Request(url, headers={'Authorization': 'Bearer ' + os.environ['ACTIONS_ID_TOKEN_REQUEST_TOKEN']})
+          with urllib.request.urlopen(request, timeout=30) as response:
+              jwt = json.load(response)['value']
+          body = json.dumps({'jwt': jwt, 'owner': os.environ['RUBYGEMS_OWNER_ID']}).encode()
+          request = urllib.request.Request('https://rubygems.org/api/v1/oidc/trusted_publisher/exchange_token', data=body, headers={'Content-Type': 'application/json', 'Accept': 'application/json'})
+          with urllib.request.urlopen(request, timeout=30) as response:
+              key = json.load(response)['rubygems_api_key']
+          if not isinstance(key, str) or not key or any(c.isspace() for c in key):
+              raise RuntimeError('RubyGems returned an invalid credential')
+          print('::add-mask::' + key)
+          with open(os.environ['GITHUB_ENV'], 'a') as output:
+              output.write('GEM_HOST_API_KEY=' + key + '\n')
+          PYTHON
       - run: gem push artifacts/transcriptdock-0.1.0.gem
