@@ -5,7 +5,7 @@ require 'uri'
 require 'ipaddr'
 
 module TranscriptDock
-  VERSION = '0.1.0'
+  VERSION = '0.1.1'
 
   class ApiError < StandardError
     attr_reader :code, :status, :retryable, :request_id, :retry_after_seconds

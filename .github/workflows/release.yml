@@ -21,7 +21,7 @@ jobs:
           ruby-version: '3.2'
           bundler-cache: false
       - run: python3 .ci/check.py
-      - run: mkdir -p artifacts && gem build transcriptdock.gemspec --output artifacts/transcriptdock-0.1.0.gem
+      - run: mkdir -p artifacts && gem build transcriptdock.gemspec --output artifacts/transcriptdock.gem
   publish:
     if: github.event_name == 'workflow_dispatch' && inputs.publish && github.ref == 'refs/heads/main'
     needs: check
@@ -36,7 +36,7 @@ jobs:
         with:
           ruby-version: '3.2'
           bundler-cache: false
-      - run: mkdir -p artifacts && gem build transcriptdock.gemspec --output artifacts/transcriptdock-0.1.0.gem
+      - run: mkdir -p artifacts && gem build transcriptdock.gemspec --output artifacts/transcriptdock.gem
       - name: Authenticate the pending RubyGems publisher
         env:
           RUBYGEMS_OWNER_ID: '256122'
@@ -57,4 +57,4 @@ jobs:
           with open(os.environ['GITHUB_ENV'], 'a') as output:
               output.write('GEM_HOST_API_KEY=' + key + '\n')
           PYTHON
-      - run: gem push artifacts/transcriptdock-0.1.0.gem
+      - run: gem push artifacts/transcriptdock.gem
