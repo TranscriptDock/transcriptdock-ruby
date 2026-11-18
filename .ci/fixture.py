@@ -36,6 +36,10 @@ class Fixture(BaseHTTPRequestHandler):
                                'body': json.loads(raw) if raw else None,
                                'idempotency_key': self.headers.get('Idempotency-Key'),
                                'authorized': self.headers.get('Authorization') == 'Bearer ' + KEY}}
+        if path == '/v1/no-content':
+            self.send_response(204)
+            self.end_headers()
+            return
         if path == '/v1/redirect':
             self.send_response(302)
             self.send_header('Location', '/v1/credential-leak')
@@ -52,6 +56,8 @@ class Fixture(BaseHTTPRequestHandler):
             status, payload = 502, b'<html>gateway failed</html>'
         elif path == '/v1/error-shape':
             status, payload = 500, ['not an error object']
+        elif path == '/v1/empty-ok':
+            payload = b''
         elif path == '/v1/malformed':
             payload = b'not-json'
         elif path == '/v1/array':

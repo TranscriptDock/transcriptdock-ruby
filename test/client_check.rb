@@ -40,6 +40,9 @@ check(raises(TranscriptDock::ApiError) { client.request('GET', '/v1/redirect') }
   check(client.request('POST', path, body: {fixture: true}, idempotency_key: 'fixture-generic-01')['request']['method'] == 'POST', 'generic submission failed')
 end
 check(client.request('DELETE', '/v1/transcripts/fixture')['request']['method'] == 'DELETE', 'delete dispatch failed')
+check(client.request('DELETE', '/v1/no-content') == {}, 'no content success not empty')
+check(client.request('DELETE', '/v1/no-content', text: true) == '', 'no content text not empty')
+check(raises(TranscriptDock::ApiError) { client.request('GET', '/v1/empty-ok') }.code == 'INVALID_RESPONSE', 'empty 200 accepted')
 ['http://example.com', 'https://user:pass@example.com', 'https://example.com/path', 'https://example.com?x=1'].each do |url|
   raises(ArgumentError) { TranscriptDock::Client.new('fixture-key', base_url: url) }
 end

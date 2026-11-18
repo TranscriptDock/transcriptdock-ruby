@@ -38,6 +38,8 @@ and `wait_for_job` provide the core flow. All public endpoints are available
 through `request(method, path, body: nil, query: {}, idempotency_key: nil)`.
 Use the exact fields in the [API contract](https://www.transcriptdock.com/docs/openapi.yaml)
 for batches, discovery, usage, upload slots and webhook endpoints.
+A success with no body (204 No Content, such as deleting a webhook endpoint)
+returns an empty hash, or an empty string with `text: true`.
 
 Responses are hashes retaining future fields and original timing units.
 Exports return the raw JSON, TXT, SRT or VTT string. Polling returns failed and

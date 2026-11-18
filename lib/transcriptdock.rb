@@ -80,6 +80,8 @@ module TranscriptDock
         raise ApiError.new(redact(error['code'] || 'HTTP_ERROR'), redact(error['message'] || "Request failed with status #{status}."), status: status,
           retryable: error.fetch('retryable', status == 429 || status >= 500), request_id: envelope['request_id'] && redact(envelope['request_id']), retry_after_seconds: error['retry_after_seconds'])
       end
+      # No Content: a success without a body, for example deleting a webhook endpoint.
+      return(text ? '' : {}) if status == 204
       return response.body if text
       begin
         result = JSON.parse(response.body)
